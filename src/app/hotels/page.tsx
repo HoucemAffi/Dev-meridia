@@ -2,6 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
+import HotelCard from '../components/HotelCard';
 
 export default function HotelsResultsPage() {
   const searchParams = useSearchParams();
@@ -232,34 +233,36 @@ export default function HotelsResultsPage() {
             </div>
 
             {loading ? (
-              <div className="text-center py-5"><div className="spinner-border text-primary"></div><p className="mt-3 text-muted">Chargement...</p></div>
+              <div className="text-center py-5"><div className="spinner-border text-primary"></div><p className="mt-3 text-muted">Chargement des hôtels...</p></div>
             ) : (
-              <div className="d-flex flex-column gap-3 pb-5">
-                {displayedHotels.map((hotel: any) => (
-                  <div key={hotel.id} className="card border-0 shadow-sm overflow-hidden rounded-4 hotel-card-hover transition">
-                    <div className="row g-0">
-                      <div className="col-md-4 position-relative">
-                        <img src={hotel.image} className="img-fluid h-100 w-100 object-fit-cover" alt="" style={{ minHeight: '230px' }} />
+              <>
+                {filteredHotels.length > 0 ? (
+                  <div className="row g-4 pb-5">
+                    {displayedHotels.map((hotel: any) => (
+                      <div key={hotel.id} className="col-md-6 col-lg-4">
+                        <HotelCard hotel={hotel} />
                       </div>
-                      <div className="col-md-8 p-4 d-flex flex-column">
-                        <div className="d-flex justify-content-between">
-                          <h5 className="fw-bold mb-1">{hotel.name} <span className="text-warning extra-small">{hotel.stars}★</span></h5>
-                          <span className="badge bg-primary px-2 py-1">{hotel.rate}</span>
-                        </div>
-                        <p className="small text-muted mb-2"><i className="bi bi-geo-alt me-1"></i>{hotel.city}</p>
-                        <div className="mt-auto pt-3 border-top d-flex justify-content-between align-items-end">
-                          <div className="extra-small text-success fw-bold">Annulation gratuite</div>
-                          <div className="text-end">
-                            <h3 className="fw-bold mb-1">{hotel.price} €</h3>
-                            <Link href={`/hotels/${hotel.id}`} className="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Voir l'offre</Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-                {filteredHotels.length === 0 && <div className="text-center py-5">Aucun hôtel ne correspond à vos critères.</div>}
-              </div>
+                ) : (
+                  <div className="text-center py-5">
+                    <i className="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                    <h5 className="text-muted">Aucun hôtel ne correspond</h5>
+                    <p className="text-muted small">Essayez de modifier vos filtres ou votre recherche</p>
+                  </div>
+                )}
+                
+                {visibleCount < filteredHotels.length && (
+                  <div className="text-center mb-5">
+                    <button 
+                      className="btn btn-outline-primary rounded-pill px-5 py-3 fw-bold"
+                      onClick={() => setVisibleCount(visibleCount + 6)}
+                    >
+                      Afficher plus d'établissements
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </main>
         </div>
