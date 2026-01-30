@@ -54,13 +54,13 @@ export default function DateRangeSelector({ startDate, endDate, onChange }: Prop
 
   return (
     <div className="relative" ref={ref}>
-      <button type="button" onClick={() => setOpen(!open)} className="bg-gray-50 rounded-lg px-3 py-2 w-full text-left text-sm text-gray-700 flex items-center justify-between">
+      <button type="button" onClick={() => { if (!open) { setOpen(true); setClosing(false); } else { setClosing(true); } }} className="bg-gray-50 rounded-lg px-3 py-2 w-full text-left text-sm text-gray-700 flex items-center justify-between">
         <span className="text-sm">{formatLabel(localStart, localEnd)}</span>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.353a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z" clipRule="evenodd" /></svg>
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-2 w-[680px] md:w-[760px] bg-white rounded-2xl shadow-lg p-4 popover-animate origin-top-center">
+        <div className={`absolute z-50 mt-2 w-[680px] md:w-[760px] bg-white rounded-2xl shadow-lg p-4 ${closing ? 'popover-exit' : 'popover-animate'} origin-top-center`} onAnimationEnd={() => { if (closing) { setOpen(false); setClosing(false); } }}>
           <div className="flex items-center justify-between mb-3">
             <div>
               <div className="text-sm text-gray-500">Dates</div>

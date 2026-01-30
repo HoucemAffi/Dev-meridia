@@ -15,6 +15,7 @@ export default function HomePage() {
   const [city, setCity] = useState('');
   const [activeTab, setActiveTab] = useState('stays');
   const [showTravelers, setShowTravelers] = useState(false);
+  const [travelerClosing, setTravelerClosing] = useState(false);
   const [travelers, setTravelers] = useState({ adults: 2, children: 0, rooms: 1 });
   
   const [startDate, setStartDate] = useState<Date | null>(new Date());
@@ -30,7 +31,10 @@ export default function HomePage() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (travelerRef.current && !travelerRef.current.contains(event.target as Node)) {
-        setShowTravelers(false);
+        if (showTravelers) {
+          setTravelerClosing(true);
+          setTimeout(() => { setShowTravelers(false); setTravelerClosing(false); }, 180);
+        }
       }
       if (destRef.current && !destRef.current.contains(event.target as Node)) {
         setShowDestSuggestions(false);
@@ -42,7 +46,7 @@ export default function HomePage() {
       // Nettoie l'écouteur quand le composant est détruit
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [showTravelers]);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('recentHotels') || '[]');
@@ -56,6 +60,10 @@ export default function HomePage() {
     }));
   };
 
+  const closeTravelers = () => {
+    setTravelerClosing(true);
+    setTimeout(() => { setShowTravelers(false); setTravelerClosing(false); }, 180);
+  };
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (city.trim()) {
@@ -142,7 +150,7 @@ export default function HomePage() {
 
                     {/* VOYAGEURS */}
                     <div className="d-flex align-items-center px-4 py-1 grow position-relative" ref={travelerRef}>
-                      <div className="d-flex align-items-center w-100 cursor-pointer" onClick={() => setShowTravelers(!showTravelers)}>
+                      <div className="d-flex align-items-center w-100 cursor-pointer" onClick={() => { if (!showTravelers) { setShowTravelers(true); setTravelerClosing(false); } else { setTravelerClosing(true); setTimeout(() => { setShowTravelers(false); setTravelerClosing(false); }, 180); } }}>
                         <i className="bi bi-person fs-4 text-muted me-3"></i>
                         <div className="w-100">
                           <label className="d-block fw-bold text-dark mb-0" style={{ fontSize: '0.75rem' }}>Voyageurs</label>
@@ -153,7 +161,7 @@ export default function HomePage() {
                       </div>
 
                       {showTravelers && (
-                        <div className="position-absolute bg-white border shadow-lg rounded-4 p-3 mt-3 traveler-popup popover-animate" style={{ zIndex: 9999, top: '100%', left: 0, minWidth: '280px' }}>
+                        <div className={`position-absolute bg-white border shadow-lg rounded-4 p-3 mt-3 traveler-popup ${travelerClosing ? 'popover-exit' : 'popover-animate'}`} style={{ zIndex: 9999, top: '100%', left: 0, minWidth: '280px' }}>
                           {['adults', 'children', 'rooms'].map((id) => (
                             <div key={id} className="d-flex justify-content-between align-items-center mb-3 text-dark">
                               <span className="fw-bold small">{id === 'adults' ? 'Adultes' : id === 'children' ? 'Enfants' : 'Chambres'}</span>
@@ -164,7 +172,7 @@ export default function HomePage() {
                               </div>
                             </div>
                           ))}
-                          <button type="button" className="btn btn-primary btn-sm w-100 rounded-pill fw-bold" onClick={() => setShowTravelers(false)}>Terminé</button>
+                          <button type="button" className="btn btn-primary btn-sm w-100 rounded-pill fw-bold" onClick={() => { setTravelerClosing(true); setTimeout(() => { setShowTravelers(false); setTravelerClosing(false); }, 180); }}>Terminé</button>
                         </div>
                       )}
                     </div>
@@ -343,9 +351,17 @@ export default function HomePage() {
         .popover-animate { animation: pop-in .18s cubic-bezier(.2, .9, .2, 1) both; transform-origin: top center; }
         .traveler-popup.popover-animate { animation: pop-in .18s cubic-bezier(.2, .9, .2, 1) both; transform-origin: top right; }
 
+        .popover-exit { animation: pop-out .14s cubic-bezier(.2, .9, .2, 1) both; transform-origin: top center; }
+        .traveler-popup.popover-exit { animation: pop-out .14s cubic-bezier(.2, .9, .2, 1) both; transform-origin: top right; }
+
         @keyframes pop-in {
           from { opacity: 0; transform: translateY(-6px) scale(.985); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes pop-out {
+          from { opacity: 1; transform: translateY(0) scale(1); }
+          to   { opacity: 0; transform: translateY(-6px) scale(.985); }
         }
 
         .hide-scrollbar::-webkit-scrollbar { display: none; }
