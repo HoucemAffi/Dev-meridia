@@ -72,3 +72,27 @@ body {
 }
 
 .border-light { border-color: #f1f1f1 !important; }
+
+/* --- SEARCH TABS & POPUP STYLES --- */
+.search-tabs button { background: transparent; border: 0; }
+.search-tabs button img { width: 36px; height: 36px; display: block; margin: 0 auto; }
+.search-tabs button:hover img { filter: brightness(0.95) saturate(0.9); }
+.search-tabs button.active { color: var(--exp-blue, #003580); }
+
+/* Date popover */
+.react-datepicker { box-shadow: 0 10px 30px rgba(0,0,0,0.12); border-radius: 12px; }
+.react-datepicker__month { padding: 1rem; }
+.react-datepicker__day--selected, .react-datepicker__day--in-range { background-color: #003580 !important; color: white !important; }
+
+/* Suggestion dropdown */
+.suggestions-panel { max-height: 300px; overflow: auto; }
+.suggestions-panel button { width: 100%; text-align: left; padding: 0.5rem; border-radius: 8px; }
+.suggestions-panel button:hover { background: #f8fafc; }
+
+/* Traveler popup improvements */
+.traveler-popup { min-width: 320px !important; border-radius: 12px !important; }
+.traveler-popup .rounded-full { border: 1px solid #e6e6e6; }
+
+@media (max-width: 768px) {
+  .traveler-popup { position: fixed !important; bottom: 0; left: 0 !important; right: 0 !important; top: auto !important; width: 100% !important; border-radius: 20px 20px 0 0 !important; padding: 2rem !important; }
+}

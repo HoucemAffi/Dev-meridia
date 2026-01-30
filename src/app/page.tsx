@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'; // useRef ajouté
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DatePicker from 'react-datepicker';
+import DateRangeSelector from './components/DateRangeSelector';
 import { registerLocale } from "react-datepicker";
 import fr from 'date-fns/locale/fr';
 import "react-datepicker/dist/react-datepicker.css";
@@ -21,13 +22,18 @@ export default function HomePage() {
 
   const router = useRouter();
 
-  // --- ÉTAPE 1 : RÉFÉRENCE ET LOGIQUE DE CLIC EXTÉRIEUR ---
+  // --- ÉTAPE 1 : RÉFÉRENCES ET LOGIQUE DE CLIC EXTÉRIEUR ---
   const travelerRef = useRef<HTMLDivElement>(null);
+  const destRef = useRef<HTMLDivElement>(null);
+  const [showDestSuggestions, setShowDestSuggestions] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (travelerRef.current && !travelerRef.current.contains(event.target as Node)) {
         setShowTravelers(false);
+      }
+      if (destRef.current && !destRef.current.contains(event.target as Node)) {
+        setShowDestSuggestions(false);
       }
     }
     // Écoute les clics sur tout le document
@@ -69,7 +75,7 @@ export default function HomePage() {
           <h1 className="fw-bold text-dark mb-4 mt-2">Où souhaitez-vous aller ?</h1>
           
           <div className="card border shadow-sm rounded-4 mx-auto text-start bg-white" style={{ maxWidth: '1050px' }}>
-            <div className="d-flex justify-content-center border-bottom bg-white pt-3">
+            <div className="d-flex justify-content-center border-bottom bg-white pt-3 search-tabs">
               {[
                 { id: 'stays', label: 'Séjours', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__bed.svg' },
                 { id: 'flights', label: 'Vols', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__flight.svg' },
@@ -92,37 +98,45 @@ export default function HomePage() {
                   <div className="d-flex align-items-center w-100 flex-wrap flex-md-nowrap">
                     
                     {/* DESTINATION */}
-                    <div className="d-flex align-items-center px-4 py-1 grow border-end border-2 border-light">
+                    <div className="d-flex align-items-center px-4 py-1 grow border-end border-2 border-light" ref={destRef}>
                       <i className="bi bi-geo-alt fs-5 text-muted me-3"></i>
-                      <div className="w-100">
+                      <div className="w-100 relative">
                         <label className="d-block fw-bold text-dark mb-0" style={{ fontSize: '0.75rem' }}>Où allez-vous ?</label>
                         <input 
                           type="text" 
-                          className="form-control border-0 p-0 shadow-none fw-normal text-muted bg-transparent" 
-                          placeholder="Saisissez une ville" 
+                          className="form-control border-0 p-0 shadow-none fw-normal text-gray-700 bg-transparent placeholder-gray-400" 
+                          placeholder="Ex: Paris, Barcelone..." 
                           value={city} 
-                          onChange={(e) => setCity(e.target.value)} 
+                          onChange={(e) => { setCity(e.target.value); setShowDestSuggestions(true); }} 
+                          onFocus={() => setShowDestSuggestions(true)}
                           required 
+                          style={{ fontSize: '1rem', paddingTop: '0.35rem' }}
                         />
+
+                        {showDestSuggestions && (
+                          <div className="absolute left-0 top-full mt-2 w-full bg-white rounded-xl shadow-lg p-3 z-40">
+                            <div className="text-xs text-gray-500 mb-2">Destinations populaires</div>
+                            <div className="flex flex-col gap-2">
+                              {['Nevşehir', 'Paris', 'Hammamet', 'Istanbul', 'Sousse', 'Monastir'].map((d) => (
+                                <button key={d} type="button" onClick={() => { setCity(d); setShowDestSuggestions(false); }} className="text-left px-2 py-2 rounded-md hover:bg-gray-100">
+                                  <div className="font-semibold">{d}</div>
+                                  <div className="text-xs text-gray-400">{d === 'Paris' ? 'France' : d === 'Hammamet' ? 'Gouvernorat de Nabeul, Tunisie' : d === 'Sousse' ? 'Gouvernorat de Sousse, Tunisie' : d === 'Monastir' ? 'Gouvernorat de Monastir, Tunisie' : d + ', Türkiye'}</div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* DATES */}
                     <div className="d-flex align-items-center px-4 py-1 grow border-end border-2 border-light">
                       <i className="bi bi-calendar3 fs-5 text-muted me-3"></i>
-                      <div className="w-100 custom-datepicker">
+                      <div className="w-100">
                         <label className="d-block fw-bold text-dark mb-0" style={{ fontSize: '0.75rem' }}>Dates</label>
-                        <DatePicker 
-                          selected={startDate} 
-                          onChange={(dates) => { const [s, e] = dates as [Date | null, Date | null]; setStartDate(s); setEndDate(e); }}
-                          startDate={startDate} 
-                          endDate={endDate} 
-                          selectsRange 
-                          locale="fr" 
-                          dateFormat="eee d MMM" 
-                          placeholderText="Ajouter des dates"
-                          className="form-control border-0 p-0 shadow-none fw-normal text-muted bg-transparent cursor-pointer w-100"
-                        />
+                        <div className="mt-1">
+                          <DateRangeSelector startDate={startDate} endDate={endDate} onChange={({ start, end }) => { setStartDate(start); setEndDate(end); }} />
+                        </div>
                       </div>
                     </div>
 
@@ -144,9 +158,9 @@ export default function HomePage() {
                             <div key={id} className="d-flex justify-content-between align-items-center mb-3 text-dark">
                               <span className="fw-bold small">{id === 'adults' ? 'Adultes' : id === 'children' ? 'Enfants' : 'Chambres'}</span>
                               <div className="d-flex align-items-center gap-2">
-                                <button type="button" className="btn btn-outline-primary btn-sm rounded-circle px-2" onClick={() => updateTravelers(id as any, 'sub')}>-</button>
+                                <button type="button" className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-lg text-gray-700" onClick={() => updateTravelers(id as any, 'sub')}>-</button>
                                 <span className="fw-bold">{(travelers as any)[id]}</span>
-                                <button type="button" className="btn btn-outline-primary btn-sm rounded-circle px-2" onClick={() => updateTravelers(id as any, 'add')}>+</button>
+                                <button type="button" className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-lg text-gray-700" onClick={() => updateTravelers(id as any, 'add')}>+</button>
                               </div>
                             </div>
                           ))}
