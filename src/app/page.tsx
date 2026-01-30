@@ -153,7 +153,7 @@ export default function HomePage() {
                       </div>
 
                       {showTravelers && (
-                        <div className="position-absolute bg-white border shadow-lg rounded-4 p-3 mt-3 traveler-popup" style={{ zIndex: 9999, top: '100%', left: 0, minWidth: '280px' }}>
+                        <div className="position-absolute bg-white border shadow-lg rounded-4 p-3 mt-3 traveler-popup popover-animate" style={{ zIndex: 9999, top: '100%', left: 0, minWidth: '280px' }}>
                           {['adults', 'children', 'rooms'].map((id) => (
                             <div key={id} className="d-flex justify-content-between align-items-center mb-3 text-dark">
                               <span className="fw-bold small">{id === 'adults' ? 'Adultes' : id === 'children' ? 'Enfants' : 'Chambres'}</span>
@@ -338,6 +338,16 @@ export default function HomePage() {
         .custom-datepicker .react-datepicker-wrapper { width: 100%; }
         .react-datepicker__header { background-color: white; border-bottom: none; }
         .react-datepicker__day--selected, .react-datepicker__day--in-range { background-color: #0d6efd !important; }
+
+        /* Popover open animation (scale + fade) */
+        .popover-animate { animation: pop-in .18s cubic-bezier(.2, .9, .2, 1) both; transform-origin: top center; }
+        .traveler-popup.popover-animate { animation: pop-in .18s cubic-bezier(.2, .9, .2, 1) both; transform-origin: top right; }
+
+        @keyframes pop-in {
+          from { opacity: 0; transform: translateY(-6px) scale(.985); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .shadow-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }

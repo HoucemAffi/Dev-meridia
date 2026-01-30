@@ -60,7 +60,7 @@ export default function DateRangeSelector({ startDate, endDate, onChange }: Prop
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-2 w-[680px] md:w-[760px] bg-white rounded-2xl shadow-lg p-4">
+        <div className="absolute z-50 mt-2 w-[680px] md:w-[760px] bg-white rounded-2xl shadow-lg p-4 popover-animate origin-top-center">
           <div className="flex items-center justify-between mb-3">
             <div>
               <div className="text-sm text-gray-500">Dates</div>
