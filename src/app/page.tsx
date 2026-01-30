@@ -71,14 +71,15 @@ export default function HomePage() {
           <div className="card border shadow-sm rounded-4 mx-auto text-start bg-white" style={{ maxWidth: '1050px' }}>
             <div className="d-flex justify-content-center border-bottom bg-white pt-3">
               {[
-                { id: 'stays', label: 'Séjours', icon: '🏨' },
-                { id: 'flights', label: 'Vols', icon: '✈️' },
-                { id: 'cars', label: 'Voitures', icon: '🚗' },
-                { id: 'activities', label: 'Activités', icon: '🎟️' }
+                { id: 'stays', label: 'Séjours', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__bed.svg' },
+                { id: 'flights', label: 'Vols', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__flight.svg' },
+                { id: 'cars', label: 'Voitures', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__car.svg' },
+                { id: 'packages', label: 'Formules', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__package.svg' },
+                { id: 'activities', label: 'Activités', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__ticket.svg' }
               ].map((tab) => (
                 <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
                   className={`btn border-0 pb-2 px-4 rounded-0 transition ${activeTab === tab.id ? 'border-bottom border-primary border-3 text-primary fw-bold' : 'text-muted'}`}>
-                  <div className="fs-3 mb-1">{tab.icon}</div>
+                  <img src={tab.icon} alt={tab.label} className="mb-1" style={{ width: 36, height: 36 }} />
                   <span className="small">{tab.label}</span>
                 </button>
               ))}
