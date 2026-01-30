@@ -74,10 +74,30 @@ body {
 .border-light { border-color: #f1f1f1 !important; }
 
 /* --- SEARCH TABS & POPUP STYLES --- */
-.search-tabs button { background: transparent; border: 0; }
-.search-tabs button img { width: 36px; height: 36px; display: block; margin: 0 auto; }
-.search-tabs button:hover img { filter: brightness(0.95) saturate(0.9); }
-.search-tabs button.active { color: var(--exp-blue, #003580); }
+.search-tabs button { background: transparent; border: 0; padding: 0.25rem 0.75rem; display: inline-flex; flex-direction: column; align-items: center; gap: 6px; }
+.search-tabs button img { width: 36px; height: 36px; display: block; margin: 0 auto; transition: transform .18s ease, filter .18s ease, opacity .18s ease; filter: grayscale(100%) opacity(.6); }
+.search-tabs button:hover img { filter: grayscale(60%) opacity(.9); transform: translateY(-2px) scale(1.04); }
+.search-tabs button.active img { filter: none; opacity: 1; transform: translateY(-3px) scale(1.08); }
+.search-tabs button span { display:block; font-size: .78rem; }
+.search-tabs button.active span { font-weight: 600; color: var(--exp-blue, #003580); }
+
+/* Date / Calendar tweaks */
+.react-datepicker { box-shadow: 0 16px 40px rgba(16,24,40,0.12); border-radius: 12px; }
+.react-datepicker__month { padding: 1rem 1.25rem; }
+.react-datepicker__day { width: 40px; height: 40px; line-height: 40px; border-radius: 9999px; margin: 0.25rem; transition: transform .12s ease, background .12s ease, color .12s ease; }
+.react-datepicker__day:hover { transform: translateY(-3px); background: rgba(0,53,128,0.06); }
+.react-datepicker__day--selected { background: #003580 !important; color: #fff !important; box-shadow: 0 8px 18px rgba(0,53,128,0.12); }
+.react-datepicker__day--in-range { background: rgba(0,53,128,0.09) !important; color: #003580 !important; }
+.react-datepicker__day--selected:focus { outline: none; }
+.react-datepicker__navigation { top: 8px; }
+
+/* make the months grid tighter and centered */
+.react-datepicker__month-container { display: inline-block; }
+.react-datepicker__month { display: inline-block; vertical-align: top; }
+
+/* Chips active style already in component, add subtle focus */
+.btn-chips { transition: transform .12s ease; }
+.btn-chips:active { transform: translateY(1px); }
 
 /* Date popover */
 .react-datepicker { box-shadow: 0 10px 30px rgba(0,0,0,0.12); border-radius: 12px; }

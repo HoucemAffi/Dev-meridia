@@ -84,11 +84,11 @@ export default function HomePage() {
                 { id: 'activities', label: 'Activités', icon: 'https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__ticket.svg' }
               ].map((tab) => (
                 <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
-                  className={`btn border-0 pb-2 px-4 rounded-0 transition ${activeTab === tab.id ? 'border-bottom border-primary border-3 text-primary fw-bold' : 'text-muted'}`}>
+                  className={`btn border-0 pb-2 px-4 rounded-0 transition ${activeTab === tab.id ? 'active border-bottom border-primary border-3 text-primary fw-bold' : 'text-muted'}`}>
                   <img src={tab.icon} alt={tab.label} className="mb-1" style={{ width: 36, height: 36 }} />
                   <span className="small">{tab.label}</span>
                 </button>
-              ))}
+              ))} 
             </div>
 
             <div className="p-4">
