@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/react-datepicker": "^6.2.0",
     "autoprefixer": "^10.4.23",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
