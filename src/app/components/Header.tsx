@@ -19,7 +19,7 @@ export default function Header({ onSectionChange, currentSection = 'home' }: Hea
   ];
 
   return (
-    <nav className="nav-glass fixed w-full z-[100] border-b border-slate-100">
+    <nav className="nav-glass fixed w-full z-100 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
