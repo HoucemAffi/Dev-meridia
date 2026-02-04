@@ -5,72 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useTranslations } from 'next-intl';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import { CurrencySelector } from '@/components/CurrencySelector';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 // ============================================
-// DONNÉES
-// ============================================
-
-const CATEGORIES = [
-  { icon: 'fa-umbrella-beach', title: 'Plages de rêve', description: 'Eaux cristallines et sable fin', color: 'from-orange-400 to-orange-600' },
-  { icon: 'fa-mountain-sun', title: 'Aventure pure', description: 'Sommets et sentiers inexplorés', color: 'from-sky-400 to-sky-600' },
-  { icon: 'fa-city', title: 'City Breaks', description: 'Capitales mondiales vibrantes', color: 'from-emerald-400 to-emerald-600' },
-  { icon: 'fa-spa', title: 'Bien-être', description: 'Sérénité et relaxation', color: 'from-purple-400 to-purple-600' },
-];
-
-const INSPIRATIONS = [
-  { icon: 'fa-wine-glass', title: 'Gastronomie', description: 'Les meilleures tables' },
-  { icon: 'fa-sailboat', title: 'Croisières', description: 'Yacht privé en Méditerranée' },
-  { icon: 'fa-leaf', title: 'Éco-Luxe', description: 'Nature et confort ultime' },
-  { icon: 'fa-gem', title: 'Héritage', description: 'Lieux chargés d\'histoire' },
-];
-
-const FEATURED_HOTELS = [
-  {
-    id: '1', name: 'Villa Roches Rouges', location: 'Saint-Raphaël, France', price: 320, rating: 9.5,
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-    description: 'Icône du design face à la mer, entre pins et roches rouges.',
-    tags: ['Bord de mer', 'Design'], badge: { text: 'Coup de cœur', color: 'bg-rose-500' }
-  },
-  {
-    id: '2', name: 'Amanzoe Resort', location: 'Porto Heli, Grèce', price: 890, rating: 9.8,
-    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
-    description: 'Sanctuaire grec avec vues à 360° sur le Péloponnèse.',
-    tags: ['Ultra-Luxe', 'Piscine privée'], badge: { text: 'Exclusif', color: 'bg-amber-500' }
-  },
-  {
-    id: '3', name: 'Castello di Reschio', location: 'Ombrie, Italie', price: 650, rating: 9.7,
-    image: 'https://images.unsplash.com/photo-1551882547-ff43c61f3c33?auto=format&fit=crop&q=80&w=800',
-    description: 'Château millénaire restauré dans les collines toscanes.',
-    tags: ['Historique', 'Nature'], badge: { text: 'Patrimoine', color: 'bg-emerald-500' }
-  },
-  {
-    id: '4', name: 'Mandarin Oriental', location: 'Paris, France', price: 780, rating: 9.6,
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800',
-    description: 'Élégance parisienne au cœur de la Rue Saint-Honoré.',
-    tags: ['Palace', 'Spa'], badge: { text: 'Palace', color: 'bg-sky-500' }
-  },
-  {
-    id: '5', name: 'Aman Tokyo', location: 'Tokyo, Japon', price: 950, rating: 9.9,
-    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=800',
-    description: 'Minimalisme japonais au sommet de la ville.',
-    tags: ['Design', 'Vue panoramique'], badge: { text: 'Top 10 Mondial', color: 'bg-violet-500' }
-  },
-  {
-    id: '6', name: 'Les Roches Blanches', location: 'Cassis, France', price: 420, rating: 9.4,
-    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800',
-    description: 'Art déco surplombant les calanques de Cassis.',
-    tags: ['Vue mer', 'Restaurant étoilé'], badge: { text: 'Éco-label', color: 'bg-teal-500' }
-  },
-];
-
-const DESTINATIONS = [
-  { name: 'Santorin', country: 'Grèce', price: 690, image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=800' },
-  { name: 'Venise', country: 'Italie', price: 520, image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&q=80&w=800' },
-  { name: 'Kyoto', country: 'Japon', price: 1450, image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800' },
-];
-
-// ============================================
-// DONNÉES HÔTELS FILTRABLES (Prêt pour API)
+// DONNÉES HÔTELS FILTRABLES
 // ============================================
 
 interface FilterableHotel {
@@ -137,14 +78,61 @@ const FILTERABLE_HOTELS: FilterableHotel[] = [
   },
 ];
 
+const FEATURED_HOTELS = [
+  {
+    id: '1', name: 'Villa Roches Rouges', location: 'Saint-Raphaël, France', price: 320, rating: 9.5,
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    description: 'Icône du design face à la mer, entre pins et roches rouges.',
+    tags: ['Bord de mer', 'Design'], badge: { text: 'Coup de cœur', color: 'bg-rose-500' }
+  },
+  {
+    id: '2', name: 'Amanzoe Resort', location: 'Porto Heli, Grèce', price: 890, rating: 9.8,
+    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+    description: 'Sanctuaire grec avec vues à 360° sur le Péloponnèse.',
+    tags: ['Ultra-Luxe', 'Piscine privée'], badge: { text: 'Exclusif', color: 'bg-amber-500' }
+  },
+  {
+    id: '3', name: 'Castello di Reschio', location: 'Ombrie, Italie', price: 650, rating: 9.7,
+    image: 'https://images.unsplash.com/photo-1551882547-ff43c61f3c33?auto=format&fit=crop&q=80&w=800',
+    description: 'Château millénaire restauré dans les collines toscanes.',
+    tags: ['Historique', 'Nature'], badge: { text: 'Patrimoine', color: 'bg-emerald-500' }
+  },
+  {
+    id: '4', name: 'Mandarin Oriental', location: 'Paris, France', price: 780, rating: 9.6,
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800',
+    description: 'Élégance parisienne au cœur de la Rue Saint-Honoré.',
+    tags: ['Palace', 'Spa'], badge: { text: 'Palace', color: 'bg-sky-500' }
+  },
+  {
+    id: '5', name: 'Aman Tokyo', location: 'Tokyo, Japon', price: 950, rating: 9.9,
+    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=800',
+    description: 'Minimalisme japonais au sommet de la ville.',
+    tags: ['Design', 'Vue panoramique'], badge: { text: 'Top 10 Mondial', color: 'bg-violet-500' }
+  },
+  {
+    id: '6', name: 'Les Roches Blanches', location: 'Cassis, France', price: 420, rating: 9.4,
+    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800',
+    description: 'Art déco surplombant les calanques de Cassis.',
+    tags: ['Vue mer', 'Restaurant étoilé'], badge: { text: 'Éco-label', color: 'bg-teal-500' }
+  },
+];
+
+const DESTINATIONS = [
+  { name: 'Santorin', country: 'Grèce', price: 690, image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Venise', country: 'Italie', price: 520, image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Kyoto', country: 'Japon', price: 1450, image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800' },
+];
+
 // ============================================
 // COMPOSANT PRINCIPAL
 // ============================================
 
 export default function Home() {
+  const t = useTranslations();
+  const { formatPrice } = useCurrency();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'hotels' | 'flights' | 'cars'>('hotels');
-  
+
   // États recherche
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -152,28 +140,12 @@ export default function Home() {
   const [showTravelers, setShowTravelers] = useState(false);
   const [travelers, setTravelers] = useState({ adults: 2, children: 0, rooms: 1 });
 
-  // ============================================
-  // États pour le filtre dynamique (Prêt pour API)
-  // ============================================
-  const [hotels, setHotels] = useState<FilterableHotel[]>(FILTERABLE_HOTELS);
+  // États pour le filtre dynamique
+  const [hotels] = useState<FilterableHotel[]>(FILTERABLE_HOTELS);
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1500]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Fonction pour charger les hôtels depuis l'API (à implémenter)
-  // const fetchHotels = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const res = await fetch('/api/hotels');
-  //     const data = await res.json();
-  //     setHotels(data);
-  //   } catch (error) {
-  //     console.error('Erreur lors du chargement des hôtels:', error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const [isLoading] = useState(false);
 
   // Filtrage des hôtels
   const filteredHotels = hotels.filter(hotel => {
@@ -199,9 +171,32 @@ export default function Home() {
     }));
   };
 
+  // Données traduites
+  const CATEGORIES = [
+    { icon: 'fa-umbrella-beach', title: t('categories.beach'), description: t('categories.beachDesc'), color: 'from-orange-400 to-orange-600' },
+    { icon: 'fa-mountain-sun', title: t('categories.adventure'), description: t('categories.adventureDesc'), color: 'from-sky-400 to-sky-600' },
+    { icon: 'fa-city', title: t('categories.city'), description: t('categories.cityDesc'), color: 'from-emerald-400 to-emerald-600' },
+    { icon: 'fa-spa', title: t('categories.wellness'), description: t('categories.wellnessDesc'), color: 'from-purple-400 to-purple-600' },
+  ];
+
+  const INSPIRATIONS = [
+    { icon: 'fa-wine-glass', title: t('inspirations.gastronomy'), description: t('inspirations.gastronomyDesc') },
+    { icon: 'fa-sailboat', title: t('inspirations.cruises'), description: t('inspirations.cruisesDesc') },
+    { icon: 'fa-leaf', title: t('inspirations.ecoLuxe'), description: t('inspirations.ecoLuxeDesc') },
+    { icon: 'fa-gem', title: t('inspirations.heritage'), description: t('inspirations.heritageDesc') },
+  ];
+
+  const REGION_FILTERS = [
+    { id: 'all', label: t('explore.all'), icon: 'fa-globe' },
+    { id: 'france', label: t('explore.france'), icon: 'fa-flag' },
+    { id: 'mediterranean', label: t('explore.mediterranean'), icon: 'fa-sun' },
+    { id: 'europe', label: t('explore.europe'), icon: 'fa-earth-europe' },
+    { id: 'international', label: t('explore.international'), icon: 'fa-plane' },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50">
-      
+
       {/* ============================================ */}
       {/* HEADER / NAVIGATION */}
       {/* ============================================ */}
@@ -220,21 +215,28 @@ export default function Home() {
 
             {/* Navigation Desktop */}
             <nav className="hidden lg:flex items-center gap-8">
-              {['Accueil', 'Destinations', 'Hôtels', 'Vols', 'Contact'].map((item) => (
-                <a key={item} href="#" className="text-slate-900 hover:text-sky-500 font-semibold transition-colors no-underline [text-decoration:none]" style={{textDecoration: 'none'}}>
+              {[
+                t('common.home'),
+                t('common.destinations'),
+                t('common.hotels'),
+                t('common.flights'),
+                t('common.contact'),
+              ].map((item, index) => (
+                <a key={index} href="#" className="text-slate-900 hover:text-sky-500 font-semibold transition-colors no-underline [text-decoration:none]" style={{textDecoration: 'none'}}>
                   {item}
                 </a>
               ))}
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-3 sm:gap-4">
-              <button className="hidden sm:flex items-center gap-2 text-slate-900 hover:text-sky-500 font-semibold transition-colors">
-                <i className="fa-solid fa-globe"></i>
-                <span className="hidden md:inline">FR</span>
-              </button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Currency & Language Selectors */}
+              <div className="hidden sm:flex items-center gap-2">
+                <CurrencySelector />
+                <LanguageSelector />
+              </div>
               <button className="bg-linear-to-r from-sky-500 to-blue-600 text-white px-4 sm:px-6 py-2.5 rounded-full font-bold text-sm shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40 transition-all hover:-translate-y-0.5">
-                Connexion
+                {t('common.login')}
               </button>
             </div>
           </div>
@@ -247,8 +249,8 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=2000" 
+          <img
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=2000"
             alt="Paradise beach"
             className="w-full h-full object-cover"
           />
@@ -261,169 +263,169 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-6 sm:mb-8">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-              <span className="text-white/90 text-sm font-semibold">+2500 voyageurs ce mois</span>
+              <span className="text-white/90 text-sm font-semibold">{t('hero.badge')}</span>
             </div>
 
             {/* Title */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-4 sm:mb-6 leading-tight">
-              Découvrez le monde,<br/>
+              {t('hero.title')}<br/>
               <span className="text-transparent bg-clip-text bg-linear-to-r from-sky-400 to-cyan-300">
-                vivez l'extraordinaire
+                {t('hero.titleHighlight')}
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-white/80 mb-8 sm:mb-12 max-w-2xl leading-relaxed">
-              Des séjours d'exception dans les plus beaux hôtels du monde. Réservez en toute confiance avec notre garantie meilleur prix.
+              {t('hero.subtitle')}
             </p>
           </div>
 
-            {/* Search Box */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl shadow-black/20 w-full">
-              {/* Tabs */}
-              <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-slate-100 rounded-xl p-1">
-                {[
-                  { id: 'hotels', icon: 'fa-hotel', label: 'Hôtels' },
-                  { id: 'flights', icon: 'fa-plane', label: 'Vols' },
-                  { id: 'cars', icon: 'fa-car', label: 'Voitures' },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-lg font-bold text-sm transition-all ${
-                      activeTab === tab.id
-                        ? 'bg-white text-sky-600 shadow-md'
-                        : 'text-slate-500 hover:text-slate-700'
-                    }`}
-                  >
-                    <i className={`fa-solid ${tab.icon}`}></i>
-                    <span className="hidden sm:inline">{tab.label}</span>
-                  </button>
-                ))}
-              </div>
+          {/* Search Box */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl shadow-black/20 w-full">
+            {/* Tabs */}
+            <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-slate-100 rounded-xl p-1">
+              {[
+                { id: 'hotels', icon: 'fa-hotel', label: t('tabs.hotels') },
+                { id: 'flights', icon: 'fa-plane', label: t('tabs.flights') },
+                { id: 'cars', icon: 'fa-car', label: t('tabs.cars') },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as 'hotels' | 'flights' | 'cars')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 rounded-lg font-bold text-sm transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-white text-sky-600 shadow-md'
+                      : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                >
+                  <i className={`fa-solid ${tab.icon}`}></i>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              ))}
+            </div>
 
-              {/* Search Form */}
-              <form onSubmit={handleSearch}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {/* Destination */}
-                  <div className="sm:col-span-2 lg:col-span-1">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                      Où allez-vous ?
-                    </label>
-                    <div className="relative">
-                      <i className="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
-                      <input
-                        type="text"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Paris, Tokyo, Bali..."
-                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Dates */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                      Arrivée
-                    </label>
-                    <div className="relative">
-                      <i className="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
-                      <DatePicker
-                        selected={startDate}
-                        onChange={(date: any) => setStartDate(date)}
-                        placeholderText="Date d'arrivée"
-                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
-                        dateFormat="dd MMM yyyy"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Departure */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                      Départ
-                    </label>
-                    <div className="relative">
-                      <i className="fa-solid fa-calendar-check absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date: any) => setStartDate(date)}
-                        placeholderText="Date de départ"
-                        minDate={startDate || undefined}
-                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
-                        dateFormat="dd MMM yyyy"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Travelers */}
+            {/* Search Form */}
+            <form onSubmit={handleSearch}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {/* Destination */}
+                <div className="sm:col-span-2 lg:col-span-1">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    {t('hero.where')}
+                  </label>
                   <div className="relative">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                      Voyageurs
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowTravelers(!showTravelers)}
-                      className="w-full flex items-center gap-3 pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 hover:border-sky-500 hover:bg-white transition-all text-left"
-                    >
-                      <i className="fa-solid fa-user absolute left-4 text-sky-500"></i>
-                      <span>{travelers.adults + travelers.children} voyageur{travelers.adults + travelers.children > 1 ? 's' : ''}</span>
-                      <i className={`fa-solid fa-chevron-down ml-auto transition-transform ${showTravelers ? 'rotate-180' : ''}`}></i>
-                    </button>
-
-                    {/* Dropdown */}
-                    {showTravelers && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-200 p-4 z-50">
-                        {[
-                          { label: 'Adultes', key: 'adults' as const, min: 1 },
-                          { label: 'Enfants', key: 'children' as const, min: 0 },
-                          { label: 'Chambres', key: 'rooms' as const, min: 1 },
-                        ].map((item) => (
-                          <div key={item.key} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
-                            <span className="font-semibold text-slate-700">{item.label}</span>
-                            <div className="flex items-center gap-3">
-                              <button
-                                type="button"
-                                onClick={() => updateTravelers(item.key, -1)}
-                                disabled={travelers[item.key] <= item.min}
-                                className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:border-sky-500 hover:text-sky-500 disabled:opacity-40 transition-colors"
-                              >
-                                <i className="fa-solid fa-minus text-xs"></i>
-                              </button>
-                              <span className="w-6 text-center font-bold">{travelers[item.key]}</span>
-                              <button
-                                type="button"
-                                onClick={() => updateTravelers(item.key, 1)}
-                                className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:border-sky-500 hover:text-sky-500 transition-colors"
-                              >
-                                <i className="fa-solid fa-plus text-xs"></i>
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <i className="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder={t('hero.searchPlaceholder')}
+                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
+                    />
                   </div>
                 </div>
 
-                {/* Search Button */}
-                <button
-                  type="submit"
-                  className="w-full mt-4 sm:mt-6 bg-linear-to-r from-sky-500 to-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
-                >
-                  <i className="fa-solid fa-search"></i>
-                  Rechercher
-                </button>
-              </form>
-            </div>
+                {/* Dates */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    {t('hero.arrival')}
+                  </label>
+                  <div className="relative">
+                    <i className="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date: Date | null) => setStartDate(date)}
+                      placeholderText={t('hero.arrival')}
+                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
+                      dateFormat="dd MMM yyyy"
+                    />
+                  </div>
+                </div>
+
+                {/* Departure */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    {t('hero.departure')}
+                  </label>
+                  <div className="relative">
+                    <i className="fa-solid fa-calendar-check absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date: Date | null) => setEndDate(date)}
+                      placeholderText={t('hero.departure')}
+                      minDate={startDate || undefined}
+                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
+                      dateFormat="dd MMM yyyy"
+                    />
+                  </div>
+                </div>
+
+                {/* Travelers */}
+                <div className="relative">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                    {t('hero.travelers')}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowTravelers(!showTravelers)}
+                    className="w-full flex items-center gap-3 pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 hover:border-sky-500 hover:bg-white transition-all text-left"
+                  >
+                    <i className="fa-solid fa-user absolute left-4 text-sky-500"></i>
+                    <span>{travelers.adults + travelers.children} {t('hero.travelers').toLowerCase()}</span>
+                    <i className={`fa-solid fa-chevron-down ml-auto transition-transform ${showTravelers ? 'rotate-180' : ''}`}></i>
+                  </button>
+
+                  {/* Dropdown */}
+                  {showTravelers && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-200 p-4 z-50">
+                      {[
+                        { label: 'Adultes', key: 'adults' as const, min: 1 },
+                        { label: 'Enfants', key: 'children' as const, min: 0 },
+                        { label: 'Chambres', key: 'rooms' as const, min: 1 },
+                      ].map((item) => (
+                        <div key={item.key} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
+                          <span className="font-semibold text-slate-700">{item.label}</span>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => updateTravelers(item.key, -1)}
+                              disabled={travelers[item.key] <= item.min}
+                              className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:border-sky-500 hover:text-sky-500 disabled:opacity-40 transition-colors"
+                            >
+                              <i className="fa-solid fa-minus text-xs"></i>
+                            </button>
+                            <span className="w-6 text-center font-bold">{travelers[item.key]}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateTravelers(item.key, 1)}
+                              className="w-8 h-8 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:border-sky-500 hover:text-sky-500 transition-colors"
+                            >
+                              <i className="fa-solid fa-plus text-xs"></i>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Search Button */}
+              <button
+                type="submit"
+                className="w-full mt-4 sm:mt-6 bg-linear-to-r from-sky-500 to-blue-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-sky-500/30 hover:shadow-xl hover:shadow-sky-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-search"></i>
+                {t('hero.search')}
+              </button>
+            </form>
+          </div>
 
           {/* Stats */}
           <div className="hidden lg:flex items-center gap-8 mt-12">
             {[
-              { value: '450+', label: 'Hôtels partenaires' },
-              { value: '50k+', label: 'Clients satisfaits' },
-              { value: '24/7', label: 'Support client' },
+              { value: '450+', label: t('stats.hotels') },
+              { value: '50k+', label: t('stats.clients') },
+              { value: '24/7', label: t('stats.support') },
             ].map((stat, i) => (
               <div key={i} className="text-white">
                 <div className="text-3xl font-black">{stat.value}</div>
@@ -441,10 +443,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-4">
-              Voyagez selon vos envies
+              {t('categories.title')}
             </h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto">
-              Choisissez votre type d'escapade et laissez-nous vous guider vers l'aventure parfaite
+              {t('categories.subtitle')}
             </p>
           </div>
 
@@ -474,12 +476,12 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 sm:mb-16 gap-4">
             <div>
               <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-3">
-                Inspirations
+                {t('inspirations.title')}
               </h2>
-              <p className="text-slate-500 text-lg">Trouvez l'expérience qui vous correspond</p>
+              <p className="text-slate-500 text-lg">{t('inspirations.subtitle')}</p>
             </div>
             <a href="#" className="text-sky-500 font-bold hover:text-sky-600 transition-colors flex items-center gap-2" style={{textDecoration: 'none'}}>
-              Voir tout <i className="fa-solid fa-arrow-right"></i>
+              {t('common.viewAll')} <i className="fa-solid fa-arrow-right"></i>
             </a>
           </div>
 
@@ -506,13 +508,13 @@ export default function Home() {
           {/* Header */}
           <div className="text-center mb-10 sm:mb-14">
             <span className="inline-block bg-linear-to-r from-sky-500 to-blue-600 text-white text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full mb-4 shadow-lg shadow-sky-500/25">
-              <i className="fa-solid fa-fire mr-2"></i>Tendances du moment
+              <i className="fa-solid fa-fire mr-2"></i>{t('explore.badge')}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-800 mb-4">
-              Explorez nos hôtels
+              {t('explore.title')}
             </h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto">
-              Filtrez et découvrez les établissements qui correspondent à vos envies
+              {t('explore.subtitle')}
             </p>
           </div>
 
@@ -521,13 +523,7 @@ export default function Home() {
             <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
               {/* Region Filters */}
               <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-                {[
-                  { id: 'all', label: 'Tous les Hôtels', icon: 'fa-globe' },
-                  { id: 'france', label: 'France', icon: 'fa-flag' },
-                  { id: 'mediterranean', label: 'Méditerranée', icon: 'fa-sun' },
-                  { id: 'europe', label: 'Europe', icon: 'fa-earth-europe' },
-                  { id: 'international', label: 'International', icon: 'fa-plane' },
-                ].map((region) => (
+                {REGION_FILTERS.map((region) => (
                   <button
                     key={region.id}
                     onClick={() => setSelectedRegion(region.id)}
@@ -551,7 +547,7 @@ export default function Home() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Rechercher un hôtel, une ville..."
+                  placeholder={t('explore.searchPlaceholder')}
                   className="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-transparent rounded-xl font-medium text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
                 />
               </div>
@@ -562,10 +558,10 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <span className="text-sm font-semibold text-slate-600">
                   <i className="fa-solid fa-euro-sign mr-2 text-sky-500"></i>
-                  Budget par nuit :
+                  {t('explore.budget')}
                 </span>
                 <div className="flex items-center gap-3 flex-1">
-                  <span className="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{priceRange[0]}€</span>
+                  <span className="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{formatPrice(priceRange[0])}</span>
                   <input
                     type="range"
                     min="0"
@@ -575,10 +571,10 @@ export default function Home() {
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-500"
                   />
-                  <span className="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{priceRange[1]}€</span>
+                  <span className="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg">{formatPrice(priceRange[1])}</span>
                 </div>
                 <span className="text-sm text-slate-500">
-                  {filteredHotels.length} hôtel{filteredHotels.length > 1 ? 's' : ''} trouvé{filteredHotels.length > 1 ? 's' : ''}
+                  {filteredHotels.length} {t('explore.hotelsFound')}
                 </span>
               </div>
             </div>
@@ -592,8 +588,8 @@ export default function Home() {
           ) : filteredHotels.length === 0 ? (
             <div className="text-center py-20">
               <i className="fa-solid fa-search text-6xl text-slate-300 mb-6"></i>
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">Aucun hôtel trouvé</h3>
-              <p className="text-slate-500">Essayez de modifier vos critères de recherche</p>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">{t('explore.noResults')}</h3>
+              <p className="text-slate-500">{t('explore.noResultsDesc')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
@@ -621,8 +617,8 @@ export default function Home() {
                     </div>
                     {/* Price Tag */}
                     <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl shadow-lg">
-                      <span className="text-lg font-black text-slate-800">{hotel.price}€</span>
-                      <span className="text-slate-500 text-xs font-medium">/nuit</span>
+                      <span className="text-lg font-black text-slate-800">{formatPrice(hotel.price)}</span>
+                      <span className="text-slate-500 text-xs font-medium">{t('common.perNight')}</span>
                     </div>
                   </div>
 
@@ -633,7 +629,7 @@ export default function Home() {
                       <i className="fa-solid fa-location-dot"></i>
                       <span>{hotel.city}, {hotel.country}</span>
                     </div>
-                    
+
                     {/* Name */}
                     <h3 className="text-base font-bold text-slate-800 mb-3 group-hover:text-sky-600 transition-colors line-clamp-1">
                       {hotel.name}
@@ -669,7 +665,7 @@ export default function Home() {
                         ))}
                       </div>
                       <span className="text-sky-500 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Voir <i className="fa-solid fa-arrow-right text-xs"></i>
+                        {t('common.see')} <i className="fa-solid fa-arrow-right text-xs"></i>
                       </span>
                     </div>
                   </div>
@@ -685,7 +681,7 @@ export default function Home() {
               className="inline-flex items-center gap-2 bg-white text-slate-800 px-8 py-4 rounded-full font-bold border-2 border-slate-200 hover:border-sky-500 hover:text-sky-600 transition-all shadow-lg hover:shadow-xl"
             >
               <i className="fa-solid fa-th-large"></i>
-              Voir tous les hôtels
+              {t('common.seeAll')}
               <i className="fa-solid fa-arrow-right"></i>
             </Link>
           </div>
@@ -700,18 +696,18 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 sm:mb-16 gap-4">
             <div>
               <span className="inline-block bg-sky-100 text-sky-600 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">
-                Sélection Premium
+                {t('featured.badge')}
               </span>
               <h2 className="text-3xl sm:text-4xl font-black text-slate-800 mb-3">
-                Notre Sélection "Elite"
+                {t('featured.title')}
               </h2>
-              <p className="text-slate-500 text-lg">Établissements triés sur le volet par nos experts</p>
+              <p className="text-slate-500 text-lg">{t('featured.subtitle')}</p>
             </div>
-            <Link 
+            <Link
               href="/hotels"
               className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-full font-bold hover:bg-sky-600 transition-colors"
             >
-              Voir tous les hôtels <i className="fa-solid fa-arrow-right"></i>
+              {t('common.seeAll')} <i className="fa-solid fa-arrow-right"></i>
             </Link>
           </div>
 
@@ -753,7 +749,7 @@ export default function Home() {
                     {hotel.name}
                   </h3>
                   <p className="text-slate-500 text-sm mb-4 line-clamp-2">{hotel.description}</p>
-                  
+
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {hotel.tags.map((tag, i) => (
@@ -766,14 +762,14 @@ export default function Home() {
                   {/* Footer */}
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <div>
-                      <span className="text-2xl font-black text-slate-800">{hotel.price}€</span>
-                      <span className="text-slate-400 text-sm font-medium"> /nuit</span>
+                      <span className="text-2xl font-black text-slate-800">{formatPrice(hotel.price)}</span>
+                      <span className="text-slate-400 text-sm font-medium"> {t('common.perNight')}</span>
                     </div>
                     <Link
                       href={`/hotels/${hotel.id}`}
                       className="text-sky-500 font-bold flex items-center gap-2 hover:gap-3 transition-all"
                     >
-                      Réserver <i className="fa-solid fa-arrow-right"></i>
+                      {t('common.book')} <i className="fa-solid fa-arrow-right"></i>
                     </Link>
                   </div>
                 </div>
@@ -790,10 +786,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-              Destinations populaires
+              {t('destinations.title')}
             </h2>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-              Les lieux les plus prisés par notre communauté de voyageurs
+              {t('destinations.subtitle')}
             </p>
           </div>
 
@@ -817,7 +813,7 @@ export default function Home() {
                   <p className="text-white/70 font-medium mb-4">{dest.country}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-white font-bold">
-                      À partir de <span className="text-sky-400">{dest.price}€</span>
+                      {t('common.from')} <span className="text-sky-400">{formatPrice(dest.price)}</span>
                     </span>
                     <span className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white group-hover:bg-sky-500 transition-colors">
                       <i className="fa-solid fa-arrow-right"></i>
@@ -839,25 +835,25 @@ export default function Home() {
             {/* Decorations */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-            
+
             <div className="relative z-10">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 sm:mb-6">
-                Prêt pour l'aventure ?
+                {t('newsletter.title')}
               </h2>
               <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-                Inscrivez-vous pour recevoir nos offres exclusives et nos guides de voyage secrets
+                {t('newsletter.subtitle')}
               </p>
               <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
                 <input
                   type="email"
-                  placeholder="Votre email"
+                  placeholder={t('newsletter.placeholder')}
                   className="flex-1 px-6 py-4 rounded-xl sm:rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder:text-white/60 font-semibold focus:bg-white/30 outline-none transition-colors"
                 />
                 <button
                   type="submit"
                   className="px-8 py-4 bg-white text-sky-600 rounded-xl sm:rounded-full font-bold hover:bg-slate-100 transition-colors shadow-lg"
                 >
-                  S'inscrire
+                  {t('newsletter.button')}
                 </button>
               </form>
             </div>
@@ -882,7 +878,7 @@ export default function Home() {
                 </span>
               </Link>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Votre partenaire de confiance pour des voyages inoubliables depuis 2015.
+                {t('footer.description')}
               </p>
               <div className="flex gap-3">
                 {['facebook-f', 'twitter', 'instagram', 'linkedin-in'].map((social) => (
@@ -900,9 +896,9 @@ export default function Home() {
 
             {/* Links */}
             {[
-              { title: 'Entreprise', links: ['À propos', 'Carrières', 'Presse', 'Blog'] },
-              { title: 'Support', links: ['Centre d\'aide', 'Nous contacter', 'FAQ', 'Annulation'] },
-              { title: 'Légal', links: ['Conditions', 'Confidentialité', 'Cookies', 'Licences'] },
+              { title: t('footer.company'), links: [t('footer.about'), t('footer.careers'), t('footer.press'), t('footer.blog')] },
+              { title: t('footer.support'), links: [t('footer.helpCenter'), t('footer.contactUs'), t('footer.faq'), t('footer.cancellation')] },
+              { title: t('footer.legal'), links: [t('footer.terms'), t('footer.privacy'), t('footer.cookies'), t('footer.licenses')] },
             ].map((col, i) => (
               <div key={i}>
                 <h4 className="text-white font-bold mb-4 sm:mb-6">{col.title}</h4>
@@ -921,9 +917,9 @@ export default function Home() {
 
           {/* Bottom */}
           <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-400 text-sm">
-            <p>© 2025 OfficielVacances. Tous droits réservés.</p>
+            <p>© 2025 OfficielVacances. {t('footer.rights')}.</p>
             <div className="flex items-center gap-4">
-              <span className="font-semibold">Paiements sécurisés</span>
+              <span className="font-semibold">{t('footer.securePayments')}</span>
             </div>
           </div>
         </div>
