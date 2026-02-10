@@ -1,0 +1,129 @@
+/* Styles personnalisés pour le double calendrier */
+.custom-double-calendar {
+  display: flex !important;
+  gap: 2rem;
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-double-calendar .react-datepicker__month-container {
+  background: white;
+  border-radius: 1rem;
+}
+
+.custom-double-calendar .react-datepicker__header {
+  background: transparent;
+  border-bottom: none;
+  padding-top: 0;
+}
+
+.custom-double-calendar .react-datepicker__current-month {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.custom-double-calendar .react-datepicker__day-names {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 0.5rem;
+}
+
+.custom-double-calendar .react-datepicker__day-name {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  width: 2.5rem;
+}
+
+.custom-double-calendar .react-datepicker__month {
+  margin: 0;
+}
+
+.custom-double-calendar .react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
+}
+
+.custom-double-calendar .react-datepicker__day {
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  border-radius: 50%;
+  margin: 0.15rem;
+  font-size: 0.95rem;
+  color: #334155;
+  transition: all 0.2s;
+}
+
+.custom-double-calendar .react-datepicker__day:hover {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+/* Date de début sélectionnée */
+.custom-double-calendar .react-datepicker__day--selected,
+.custom-double-calendar .react-datepicker__day--range-start {
+  background-color: #0ea5e9 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Date de fin sélectionnée */
+.custom-double-calendar .react-datepicker__day--range-end {
+  background-color: #0ea5e9 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Dates entre le début et la fin */
+.custom-double-calendar .react-datepicker__day--in-range,
+.custom-double-calendar .react-datepicker__day--in-selecting-range {
+  background-color: #e0f2fe;
+  color: #0284c7;
+  border-radius: 0;
+}
+
+.custom-double-calendar .react-datepicker__day--in-range:first-child,
+.custom-double-calendar .react-datepicker__day--range-start {
+  border-radius: 50% 0 0 50%;
+}
+
+.custom-double-calendar .react-datepicker__day--in-range:last-child,
+.custom-double-calendar .react-datepicker__day--range-end {
+  border-radius: 0 50% 50% 0;
+}
+
+/* Navigation entre les mois */
+.custom-double-calendar .react-datepicker__navigation {
+  top: 0.5rem;
+}
+
+.custom-double-calendar .react-datepicker__navigation--previous {
+  left: 1rem;
+}
+
+.custom-double-calendar .react-datepicker__navigation--next {
+  right: 1rem;
+}
+
+.custom-double-calendar .react-datepicker__navigation-icon::before {
+  border-color: #64748b;
+  border-width: 2px 2px 0 0;
+}
+
+/* Jours désactivés */
+.custom-double-calendar .react-datepicker__day--disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.custom-double-calendar .react-datepicker__day--disabled:hover {
+  background: transparent;
+}
+
+/* Jours hors du mois */
+.custom-double-calendar .react-datepicker__day--outside-month {
+  color: #cbd5e1;
+}

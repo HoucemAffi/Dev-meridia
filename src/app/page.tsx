@@ -9,6 +9,8 @@ import { useTranslations } from 'next-intl';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { CurrencySelector } from '@/components/CurrencySelector';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import DateRangePicker from '@/components/DateRangePicker';
+import '@/components/DateRangePicker.css';
 
 // ============================================
 // DONNÉES HÔTELS FILTRABLES
@@ -323,41 +325,26 @@ export default function Home() {
                     />
                   </div>
                 </div>
+              
 
-                {/* Dates */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    {t('hero.arrival')}
-                  </label>
-                  <div className="relative">
-                    <i className="fa-solid fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date: Date | null) => setStartDate(date)}
-                      placeholderText={t('hero.arrival')}
-                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
-                      dateFormat="dd MMM yyyy"
-                    />
-                  </div>
-                </div>
+              {/* Date Range Picker Unifié */}
+              <div className="relative">
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Dates du séjour
+                </label>
+                <DateRangePicker
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={(dates) => {
+                    setStartDate(dates[0]);
+                    setEndDate(dates[1]);
+                  }}
+                  minDate={new Date()}
+                  placeholder="Sélectionnez vos dates"
+                />
+              </div>
+                
 
-                {/* Departure */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    {t('hero.departure')}
-                  </label>
-                  <div className="relative">
-                    <i className="fa-solid fa-calendar-check absolute left-4 top-1/2 -translate-y-1/2 text-sky-500"></i>
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date: Date | null) => setEndDate(date)}
-                      placeholderText={t('hero.departure')}
-                      minDate={startDate || undefined}
-                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-transparent rounded-xl font-semibold text-slate-800 placeholder:text-slate-400 focus:border-sky-500 focus:bg-white outline-none transition-all"
-                      dateFormat="dd MMM yyyy"
-                    />
-                  </div>
-                </div>
 
                 {/* Travelers */}
                 <div className="relative">
