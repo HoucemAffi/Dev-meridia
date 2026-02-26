@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { CurrencySelector } from '@/components/CurrencySelector';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import Image from 'next/image'; 
 
 // ============================================
 // DONNÉES HÔTELS FILTRABLES
@@ -204,14 +205,17 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 sm:gap-3" style={{textDecoration: 'none'}}>
-              <div className="w-9 h-9 sm:w-11 sm:h-11 bg-linear-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/30">
-                <i className="fa-solid fa-paper-plane text-white text-sm sm:text-base"></i>
-              </div>
-              <span className="text-xl sm:text-2xl font-extrabold text-slate-800">
-                Officiel<span className="text-sky-500">Vacances</span>
-              </span>
-            </Link>
+{/* Logo */}
+<Link href="/" className="flex items-center">
+  <Image 
+    src="/Meridia-Voyages.png" 
+    alt="Meridia Voyages" 
+    width={240} 
+    height={58} 
+    className="h-14 w-auto"
+    priority
+  />
+</Link>
 
             {/* Navigation Desktop */}
             <nav className="hidden lg:flex items-center gap-8">
@@ -869,14 +873,15 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12 sm:mb-16">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2 mb-6" style={{textDecoration: 'none'}}>
-                <div className="w-10 h-10 bg-linear-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center">
-                  <i className="fa-solid fa-paper-plane text-white"></i>
-                </div>
-                <span className="text-xl font-extrabold text-white">
-                  Officiel<span className="text-sky-400">Vacances</span>
-                </span>
-              </Link>
+           <Link href="/" className="flex items-center mb-6" style={{textDecoration: 'none'}}>
+  <Image 
+    src="/Meridia-Voyages.png" 
+    alt="Meridia Voyages" 
+    width={240} 
+    height={58} 
+    className="h-11 w-auto brightness-0 invert"
+  />
+</Link>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
                 {t('footer.description')}
               </p>

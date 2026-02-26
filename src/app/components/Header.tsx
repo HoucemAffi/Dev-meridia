@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import Image from 'next/image';
-
+import Image from 'next/image'; 
 interface HeaderProps {
   onSectionChange?: (section: string) => void;
   currentSection?: string;
@@ -23,25 +22,16 @@ export default function Header({ onSectionChange, currentSection = 'home' }: Hea
     <nav className="nav-glass fixed w-full z-100 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         {/* Logo */}
-       {/* <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-sky-600 rounded-xl flex items-center justify-center shadow-lg shadow-sky-200">
-            <i className="fa-solid fa-paper-plane text-white text-sm sm:text-base"></i>
-          </div>
-          <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
-            OfficielVacances<span className="text-sky-600">.</span>
-          </span>
-        </Link>*/}
-        {/* Logo */}
-<Link href="/" className="flex items-center">
-  <Image 
-    src="/Meridia-Voyages.png" 
-    alt="Meridia Voyages" 
-    width={200} 
-    height={50} 
-    className="h-12 w-auto"
-    priority  // Ajoutez ceci pour charger le logo en priorité
-  />
-</Link>
+        <Link href="/" className="flex items-center">
+          <Image 
+            src="/Meridia-Voyages.png" 
+            alt="Meridia Voyages" 
+            width={200} 
+            height={50} 
+            className="h-12 w-auto"
+            priority
+          />
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8 lg:gap-10 font-semibold text-slate-600">
