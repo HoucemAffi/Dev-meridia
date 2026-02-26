@@ -31,15 +31,17 @@ export default function Header({ onSectionChange, currentSection = 'home' }: Hea
             OfficielVacances<span className="text-sky-600">.</span>
           </span>
         </Link>*/}
-        <div className="flex items-center">
-          <Image 
-            src="/Meridia-Voyages.png" 
-            alt="Meridia Voyages" 
-            width={200} 
-            height={50} 
-            className="h-12 w-auto"
-          />
-        </div>
+        {/* Logo */}
+<Link href="/" className="flex items-center">
+  <Image 
+    src="/Meridia-Voyages.png" 
+    alt="Meridia Voyages" 
+    width={200} 
+    height={50} 
+    className="h-12 w-auto"
+    priority  // Ajoutez ceci pour charger le logo en priorité
+  />
+</Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8 lg:gap-10 font-semibold text-slate-600">
